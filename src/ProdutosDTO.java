@@ -12,6 +12,13 @@ public class ProdutosDTO {
     private String nome;
     private Integer valor;
     private String status;
+    
+    public ProdutosDTO(int id, String nome, int valor, String status) {
+        this.id = id;
+        this.nome = nome;
+        this.valor = valor;
+        this.status = status;
+    }
 
     public Integer getId() {
         return id;

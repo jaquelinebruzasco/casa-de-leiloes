@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 
@@ -23,8 +24,6 @@ public class ProdutosDAO {
     public String url = "jdbc:mysql://localhost:3306/leiloes_db?useSSL=false&useTimezone=true&serverTimezone=UTC";
     public String user = "root";
     public String password = "1234";
-    ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
     
     public void cadastrarProduto (String nome, int valor, String status){
         try {
@@ -41,21 +40,31 @@ public class ProdutosDAO {
             System.out.println("O driver não está disponível para acesso ou não existe");
         } catch (SQLException ex) {
             System.out.println("DAO Sintaxe de comando invalida: " + ex.getLocalizedMessage());
-        }
-        
-        
-      
-        
-        
+        }     
     }
     
     public ArrayList<ProdutosDTO> listarProdutos(){
-        
-        return listagem;
-    }
-    
-    
-    
-        
+        ArrayList<ProdutosDTO> produtos = new ArrayList<>();
+        String query = "SELECT * FROM produtos";
+
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                int valor = rs.getInt("valor");
+                String status = rs.getString("status");
+
+                ProdutosDTO produto = new ProdutosDTO(id, nome, valor, status);
+                produtos.add(produto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return produtos;
+    }     
 }
 
