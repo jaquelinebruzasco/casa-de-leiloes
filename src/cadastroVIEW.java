@@ -1,3 +1,6 @@
+
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -140,16 +143,18 @@ public class cadastroVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_cadastroNomeActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        ProdutosDTO produto = new ProdutosDTO();
         String nome = cadastroNome.getText();
-        String valor = cadastroValor.getText();
+        int valor = parseInt(cadastroValor.getText());
         String status = "A Venda";
-        produto.setNome(nome);
-        produto.setValor(Integer.parseInt(valor));
-        produto.setStatus(status);
         
-        ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
+        if (!nome.isEmpty() && valor > 0) {
+                ProdutosDAO produtosDAO = new ProdutosDAO();
+                produtosDAO.cadastrarProduto(nome, valor, status);
+                dispose();
+                JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");                
+            } else {
+                JOptionPane.showMessageDialog(this, "Preencha todos os campos com valores válidos!");
+            }
         
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
@@ -192,7 +197,14 @@ public class cadastroVIEW extends javax.swing.JFrame {
             }
         });
     }
-
+    public int parseInt(String s) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Coloque um número inteiro válido!");
+            return 0;
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrar;
     private javax.swing.JButton btnProdutos;
