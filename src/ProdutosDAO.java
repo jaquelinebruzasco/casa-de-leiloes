@@ -65,6 +65,23 @@ public class ProdutosDAO {
         }
 
         return produtos;
-    }     
+    }
+    
+    public void venderProduto(int id) {
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection(url, user, password);
+        PreparedStatement ps = conn.prepareStatement("UPDATE produtos SET status = ? WHERE id = ?");
+        ps.setString(1, "Vendido");
+        ps.setInt(2, id);
+        ps.executeUpdate();
+        conn.close();
+        ps.close();
+    } catch (ClassNotFoundException ex) {
+        System.out.println("O driver não está disponível para acesso ou não existe");
+    } catch (SQLException ex) {
+        System.out.println("DAO Sintaxe de comando invalida: " + ex.getLocalizedMessage());
+    }
+}
 }
 
