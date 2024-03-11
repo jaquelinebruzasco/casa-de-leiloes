@@ -68,20 +68,44 @@ public class ProdutosDAO {
     }
     
     public void venderProduto(int id) {
-    try {
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        conn = DriverManager.getConnection(url, user, password);
-        PreparedStatement ps = conn.prepareStatement("UPDATE produtos SET status = ? WHERE id = ?");
-        ps.setString(1, "Vendido");
-        ps.setInt(2, id);
-        ps.executeUpdate();
-        conn.close();
-        ps.close();
-    } catch (ClassNotFoundException ex) {
-        System.out.println("O driver não está disponível para acesso ou não existe");
-    } catch (SQLException ex) {
-        System.out.println("DAO Sintaxe de comando invalida: " + ex.getLocalizedMessage());
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(url, user, password);
+            PreparedStatement ps = conn.prepareStatement("UPDATE produtos SET status = ? WHERE id = ?");
+            ps.setString(1, "Vendido");
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            conn.close();
+            ps.close();
+        } catch (ClassNotFoundException ex) {
+            System.out.println("O driver não está disponível para acesso ou não existe");
+        } catch (SQLException ex) {
+            System.out.println("DAO Sintaxe de comando invalida: " + ex.getLocalizedMessage());
+        }
     }
-}
+    
+    public ArrayList<ProdutosDTO> listarProdutosVendidos() {
+        ArrayList<ProdutosDTO> produtosVendidos = new ArrayList<>();
+        String query = "SELECT * FROM produtos WHERE status = 'Vendido'";
+
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                int valor = rs.getInt("valor");
+                String status = rs.getString("status");
+
+                ProdutosDTO produto = new ProdutosDTO(id, nome, valor, status);
+                produtosVendidos.add(produto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return produtosVendidos;
+    }
 }
 
